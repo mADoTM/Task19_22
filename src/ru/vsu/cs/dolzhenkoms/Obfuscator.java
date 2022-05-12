@@ -3,14 +3,14 @@ package ru.vsu.cs.dolzhenkoms;
 import java.io.IOException;
 import java.util.HashMap;
 public class Obfuscator {
-    private HashMap<String, String> obfuscateDictionary = new HashMap<String, String>();
+    private HashMap<String, String> obfuscateDictionary = new HashMap<>();
 
     private final String javaFileSource;
     private final String code;
 
     public Obfuscator(String source) throws IOException {
         this.javaFileSource = source;
-        this.code = FileUtils.getAllText(javaFileSource).trim().replace("\r", " ").replace("\n \n", "\n");
+        this.code = FileUtils.getAllText(javaFileSource);
     }
 
     public void execute() throws IOException {
@@ -26,7 +26,7 @@ public class Obfuscator {
                     obfuscateCode.append(symbol);
                     continue;
                 }
-                else if(isWordSpecial(word)) {
+                else if(isWordSpecial(word) || isWordNumber(word)) {
                         obfuscateCode.append(word);
                 }
                 else {
@@ -68,5 +68,17 @@ public class Obfuscator {
 
     private boolean isWordSpecial(String word) {
         return word.length() == 1 && SpecialSymbols.isSpecialEndpointSymbol(word.charAt(0)) || SpecialSymbols.isJavaKeyWordOrMain(word);
+    }
+
+    private boolean isWordNumber(String word) {
+        if (word == null) {
+            return false;
+        }
+        try {
+            double d = Double.parseDouble(word);
+        } catch (NumberFormatException nfe) {
+            return false;
+        }
+        return true;
     }
 }

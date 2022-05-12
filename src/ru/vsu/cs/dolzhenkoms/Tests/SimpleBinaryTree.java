@@ -1,3 +1,5 @@
+package ru.vsu.cs.dolzhenkoms.Tests;
+
 import java.util.Scanner;
 
 
