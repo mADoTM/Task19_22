@@ -9,7 +9,7 @@ public class SpecialSymbols {
             '{', '}', ';', ',', '\n', '(', ')', '=', '[', ']', '>', '<', '&', '|', ' '
     );
 
-    private final static List<String> javaKeywors = Arrays.asList(
+    private final static List<String> javaKeywords = Arrays.asList(
     "abstract",	"continue",	"for",	"new",	"switch",
             "assert",	"default",	"goto",	"package",	"synchronized",
     "boolean",	"do",	"if",	"private",	"this",
@@ -19,12 +19,12 @@ public class SpecialSymbols {
             "catch",	"extends",	"int",	"short",	"try",
             "char",	"final",	"interface",	"static",	"void",
             "class",	"finally",	"long",	"strictfp",	"volatile",
-            "const",	"float",	"native",	"super",	"while"
+            "const",	"float",	"native",	"super",	"while", "String",
+            "main", "Main"
     );
 
     public static boolean isJavaKeyWordOrMain(String word) {
-        word = word.toLowerCase(Locale.ROOT);
-        return javaKeywors.contains(word) || word == "main" || word == "Main";
+        return javaKeywords.contains(word);
     }
 
     public static boolean isSpecialEndpointSymbol(char symbol) {

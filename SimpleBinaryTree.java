@@ -1,5 +1,3 @@
-package ru.vsu.cs.dolzhenkoms;
-
 import java.util.Scanner;
 
 

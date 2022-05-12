@@ -1,25 +1,19 @@
 package ru.vsu.cs.dolzhenkoms;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
-
 public class Obfuscator {
     private HashMap<String, String> obfuscateDictionary = new HashMap<String, String>();
 
-    private String javaFileSource;
+    private final String javaFileSource;
+    private final String code;
 
-    public Obfuscator(String source) {
+    public Obfuscator(String source) throws IOException {
         this.javaFileSource = source;
+        this.code = FileUtils.getAllText(javaFileSource).trim().replace("\r", " ").replace("\n \n", "\n");
     }
 
     public void execute() throws IOException {
-        String code = FileUtils.getAllText(javaFileSource).trim().replace("\r", " ").replace("\n \n", "\n");
-
-        System.out.println(code);
-
         StringBuilder obfuscateCode = new StringBuilder();
 
         int lastIndex = 0;
@@ -32,34 +26,47 @@ public class Obfuscator {
                     obfuscateCode.append(symbol);
                     continue;
                 }
-                else if(word.length() == 1 && SpecialSymbols.isSpecialEndpointSymbol(word.charAt(0))) {
+                else if(isWordSpecial(word)) {
                         obfuscateCode.append(word);
-                }
-                else if (SpecialSymbols.isJavaKeyWordOrMain(word)) {
-                    obfuscateCode.append(word);
                 }
                 else {
                     if(word.charAt(0) == '\"') {
-                        if (word.charAt(word.length() - 1) == '\"') {
+                        if (isWordString(word)) {
                             obfuscateCode.append(word);
                         }
                         else {
                             continue;
                         }
                     }
-                    else if(!obfuscateDictionary.containsKey(word)) {
+                    else if(obfuscateDictionary.containsKey(word)) {
+                        obfuscateCode.append(obfuscateDictionary.get(word));
+
+                    }
+                    else {
                         String temp = "v" + (obfuscateDictionary.size() + 1);
                         obfuscateDictionary.put(word, temp);
                         obfuscateCode.append(temp);
-                    }
-                    else {
-                        obfuscateCode.append(obfuscateDictionary.get(word));
                     }
                 }
                 lastIndex = i + 1;
                 obfuscateCode.append(symbol);
             }
         }
-        System.out.println(obfuscateCode.toString());
+
+        String obfuscatedFileName = "Obfuscated" + getFileName();
+        FileUtils.createFileWithText(obfuscatedFileName, obfuscateCode.toString());
+    }
+
+    private String getFileName() {
+        String[] details = javaFileSource.split("/");
+        return details[details.length - 1];
+    }
+
+    private boolean isWordString(String word) {
+        return word.charAt(0) == '\"' && word.charAt(word.length() - 1) == '\"';
+    }
+
+    private boolean isWordSpecial(String word) {
+        return word.length() == 1 && SpecialSymbols.isSpecialEndpointSymbol(word.charAt(0)) || SpecialSymbols.isJavaKeyWordOrMain(word);
     }
 }
